@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+<initialize>
+	    <user_email>iziksh333@gmail.com</user_email>
+	    <user_password>a6201691</user_password>
+	    <expected_sign_in>false</expected_sign_in>
+	    
+</initialize>	
+<initialize>
+    <user_email>iziksh@gmail.com</user_email>
+    <user_password>a6201691</user_password>
+    <expected_sign_in>true</expected_sign_in>
+</initialize>
+</menu>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+<initialize>
+	    <browser>FF</browser>
+	    <url>http://www.work-around.co.il</url>
+	    <chromedriver>/Users/izik/Downloads/Selenium/chromedriver</chromedriver>
+	    <ff>/Users/izik/Downloads/Selenium/geckodriver</ff>
+	    <ExtentReportsPath>/Users/izik/Downloads/Selenium/</ExtentReportsPath>
+	    <ImagePath>/Users/izik/Downloads/Selenium/</ImagePath>
+</initialize>	
+</menu>
