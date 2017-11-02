@@ -2,7 +2,7 @@
 <menu>
 <initialize>
 	    <browser>FF</browser>
-	    <url>http://www.work-around.co.ill</url>
+	    <url>http://www.work-around.co.il</url>
 	    <chromedriver>/Users/izik/Downloads/Selenium/chromedriver</chromedriver>
 	    <ff>/Users/izik/Downloads/Selenium/geckodriver</ff>
 	    <ExtentReportsPath>/Users/izik/Downloads/Selenium/</ExtentReportsPath>
