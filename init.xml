@@ -7,5 +7,6 @@
 	    <ff>/Users/izik/Downloads/Selenium/geckodriver</ff>
 	    <ExtentReportsPath>/Users/izik/Downloads/Selenium/</ExtentReportsPath>
 	    <ImagePath>/Users/izik/Downloads/Selenium/</ImagePath>
+	    <ImagePath>/Users/izik/Downloads/Selenium/</ImagePath>
 </initialize>	
 </menu>

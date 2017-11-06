@@ -12,6 +12,7 @@ public class testRunner
 	{
       JUnitCore.main("TestCase.Sanity");
       
+      
 	}
 
 }
