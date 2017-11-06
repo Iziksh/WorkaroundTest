@@ -1,5 +1,8 @@
 package Utilities;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -10,6 +13,9 @@ import org.sikuli.script.Screen;
 import org.sikuli.script.SikuliException;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -30,7 +36,7 @@ import org.apache.commons.io.FileUtils;
 
 import org.w3c.dom.Document;
 
-import static org.testng.Assert.fail;
+
 
 import java.io.File;
 
@@ -49,6 +55,7 @@ public class Base {
 	 public static Base xml_i = new Base();
 	 public static String ImagePath;
 	 public static Screen screen;
+	 public static String sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Calendar.getInstance().getTime());
 	 
 	 //######################## INITIALIZE ########################
 	 
@@ -144,15 +151,14 @@ public class Base {
 	    public static void ReportsInstance () throws ParserConfigurationException, SAXException, IOException
 	    {
 	    	 // Reports - new instance
-	    	 String ReportName = "WorkaroundReport.html";
-	    	 ExtentReportsPath = xml_i.getData("ExtentReportsPath", 0,"init");
-	    	 System.out.println("Report - Start test " + ExtentReportsPath+ReportName);
-			 extent= new ExtentReports(ExtentReportsPath+ReportName ,true);
+	    	 String ReportPath = xml_i.getData("ExtentReportsPath", 0,"init") + "WorkaroundReport_" + sdf +".html";
+	    	 System.out.println("Report - Start test " + ReportPath );
+			 extent= new ExtentReports(ReportPath ,true);
 	    }
 	    
 	    public static String Screenshot() throws ParserConfigurationException, SAXException, IOException
 	    {   
-	    	String ImagePath = xml_i.getData("ImagePath", 0,"init") + "wa.png";
+	    	String ImagePath = xml_i.getData("ImagePath", 0,"init") + "wa_"+ GetRandomNumber() +".png";
 	    	scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 	    	destFile = new File(ImagePath);
 	    	FileUtils.copyFile(scrFile, destFile);
@@ -188,27 +194,39 @@ public class Base {
 	    	
 	    }
 	    
-	    public static void FindImage() 
+	    public static void FindImage(String ImagePath) throws ParserConfigurationException, SAXException, IOException 
 	    {
 				try 
 				{
 					//screen = new Screen();
 					driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-				    screen.find("/Users/izik/Desktop/wa/wa_image.png");
-					test.log(LogStatus.PASS, "Image exist" );
+				    screen.find(ImagePath);
+					test.log(LogStatus.PASS, "Visual Testing - Image exist" );
 				} 
-				catch (FindFailed e) 
+				catch (Exception e) 
 				{
 					// TODO Auto-generated catch block
-					test.log(LogStatus.FAIL, "Image not exist " + e);
+					test.log(LogStatus.FAIL, "Visual Testing  - Image not exist " + e);
+					fail("Visual Testing  - Image not exist"  + e);
 				}	
 		
 	    }
 	    
-	   
-	  
-	    
 	    //###################  END RVisual Testing       #############
+		 //###########################################################
+	    
+	    
+	    
+	    //###################  Start numeric functions     #############
+		 //###########################################################
+	    
+	    public static int GetRandomNumber()
+	    {
+	    	Random rand = new Random();
+	    	int  n = rand.nextInt(50000) + 1;
+	    	return n;
+	    }
+	    //###################  END numeric functions      #############
 		 //###########################################################
 	    
 }
