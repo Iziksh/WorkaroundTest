@@ -72,7 +72,7 @@ public class sign_in extends Base {
 				System.out.println("catent row is: " + i);
 				
 				 
-				  FindImage();
+				 FindImage(xml_s.getData("image_path", i,"sign_in"));
 				   
 				  gf.DisplayObject(user_email);
 				  user_email.clear();
@@ -108,14 +108,7 @@ public class sign_in extends Base {
 				      fail("XML fail -- The **expected_sign_in** supposed be boolean variable");
 				  }
 			 }
-			}
-//		   catch (FindFailed e) 
-//					{
-//						// TODO Auto-generated catch block
-//						test.log(LogStatus.FAIL, "Image not exist " + e);
-//						e.getMessage();
-//						System.out.println("Visual Testing - Start " );
-//					}	
+			}	
 		   catch (IOException e)
 		   {
 			   
@@ -124,9 +117,9 @@ public class sign_in extends Base {
 		   }
 		   catch(AssertionError ee)
 		   {
-	
 			   test.log(LogStatus.FAIL,ee.getMessage());
 			    System.out.println("failr eee"+ ee);
+			    fail("Image not exist ");
 			}
 		
 		 
