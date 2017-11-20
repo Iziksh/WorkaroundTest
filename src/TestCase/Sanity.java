@@ -4,21 +4,25 @@ package TestCase;
 
 import java.io.IOException;
 
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+
+
 import org.openqa.selenium.support.PageFactory;
-import org.w3c.dom.Document;
+
 import org.xml.sax.SAXException;
 
-import com.relevantcodes.extentreports.LogStatus;
 
 import Utilities.Base;
+
+
+import org.junit.runners.MethodSorters;
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
 
 public class Sanity extends Base
 {
@@ -50,18 +54,19 @@ public class Sanity extends Base
 		CloseInstance();
 		driver.quit();
 	}
-	
 	@Test
-	public void a_test() throws Exception
+	public void firstTest() throws Exception
 	{
+	// Home page
 	 StartReportTest("Entrance", "Entrance to workaround.co.il");
 	  mp.Entrance();
 	  
 	}
 	
 	@Test
-	public void b_test() throws Exception
+	public void secondTest() throws Exception
 	{
+	// Sign in page 
 	  StartReportTest("SignIn", "SignIn to workaround.co.il");
 	  si.VerifySignIn();
 	}

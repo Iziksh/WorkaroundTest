@@ -10,9 +10,7 @@ public class testRunner
 
 	public static void main(String[] args) 
 	{
-      JUnitCore.main("TestCase.Sanity");
-      
-      
+      JUnitCore.main("TestCase.Sanity");  
 	}
 
 }

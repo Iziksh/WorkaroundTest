@@ -199,7 +199,7 @@ public class Base {
 				try 
 				{
 					//screen = new Screen();
-					driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+					driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
 				    screen.find(ImagePath);
 					test.log(LogStatus.PASS, "Visual Testing - Image exist" );
 				} 
