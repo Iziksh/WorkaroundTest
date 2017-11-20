@@ -1,9 +1,9 @@
 # Workaround selenium Test 
 
 
-1. This test run on MAC.
+This test run on MAC.
 
-2. The project includes:
+# The project includes:
 
 1. XML.
 2. Object Factory.
