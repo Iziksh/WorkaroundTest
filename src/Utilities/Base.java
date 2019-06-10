@@ -1,232 +1,386 @@
 package Utilities;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.sikuli.script.FindFailed;
-import org.sikuli.script.Screen;
-import org.sikuli.script.SikuliException;
-
+import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-//import javax.xml.transform.Transformer;
-//import javax.xml.transform.TransformerException;
-//import javax.xml.transform.TransformerFactory;
-//import javax.xml.transform.dom.DOMSource;
-//import javax.xml.transform.stream.StreamResult;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 
-import org.apache.commons.io.FileUtils;
-
-import org.w3c.dom.Document;
-
-
-
-import java.io.File;
-
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Date;
 
 public class Base {
-	 public static WebDriver driver;
-	 public static File fXmlFile;
-	 public  File SignInFile;
-	 public static Document doc;
-	 public static String browser;
-	 public static String ExtentReportsPath;
-	 public static ExtentReports extent;
-	 public static ExtentTest test;
-	 public static File scrFile;
-	 public static File destFile;
-	 public static Base xml_i = new Base();
-	 public static String ImagePath;
-	 public static Screen screen;
-	 public static String sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Calendar.getInstance().getTime());
-	 
-	 //######################## INITIALIZE ########################
-	 
-	 public static void BrowserProperty()
-	 {
-		 try {
-			 browser = xml_i.getData("browser",0,"init");
-			 switch (browser.toLowerCase()) 
-			 {
-			 case "chrome": 
-				 Chrome(xml_i.getData("chromedriver", 0,"init"));
-				 break;
-			 case "ff": 
-				 FF(xml_i.getData("ff", 0,"init"));
-				 break;
-			 }
-			
+	public static String User="";
+	public static String UserIm="";
+	public static String UserFi="";
+
+
+	public static String SSpath;
+	public static WebDriver driver;
+	public static JavascriptExecutor jse;
+	public static Statement sqlStatement;
+	public static Connection myConnection;
+	public static String dbURL;
+	public static String strUserID;
+	public static String strPassword;
+	public static String db;
+	public static String environment;
+	public static ExtentReports extent;
+	public static ExtentTest test;  
 	
-			 driver.get(xml_i.getData("url", 0,"init"));
-			 driver.manage().window().maximize();
-			 driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-			
-		 } 
-		 catch (ParserConfigurationException | SAXException | IOException e) {
-			 // TODO Auto-generated catch block
-			 e.printStackTrace();
-		 }	
-	 }
-	 
-	 public static void Chrome(String wedriverpath)
-	 {
-		System.setProperty("webdriver.chrome.driver", wedriverpath);	
-		driver = new ChromeDriver();
-	 }
-	 
-	 public static WebDriver FF(String wedriverpath)
-	 {
-		System.setProperty("webdriver.geckodriver.driver", wedriverpath);
-		return driver = new FirefoxDriver();
-	 }
-	 
-	 
-	 //############################################################
-	 //########################   XML  ###########################
-		  
-	    //retrieving data from xml file 
-	    // nodeNumber start from 0
-	    public String getData(String nodeName,int nodeNumber,String FileName ) throws ParserConfigurationException, SAXException, IOException
-	    { 
-	    	 switch (FileName) 
-			  {
-		         case "init": 
-		        	 fXmlFile=new File("/Users/izik/java workspace/workaround/init.xml‬");
-		          break;
-		         case "sign_in": 
-		        	 fXmlFile=new File("/Users/izik/java workspace/workaround/sign_in.xml‬");
-		          break;
-		         default: fXmlFile=new File("Pl insert a valid XML file name");
-	             break;
-		          
-			  }   
-		        // create the object of doc
-		        DocumentBuilderFactory dbFactory=DocumentBuilderFactory.newInstance();
-		        DocumentBuilder dBuilder=dbFactory.newDocumentBuilder();
-		        doc=dBuilder.parse(fXmlFile);
-		        doc.getDocumentElement().normalize();
-		     
-	            return doc.getElementsByTagName(nodeName).item(nodeNumber).getTextContent();
-	    }
-	    
-	    
-	 // set the content into xml file
-	    public static void setData(String nodeName,int nodeNumber ,String textContent  ) throws ParserConfigurationException, SAXException, IOException, Exception
-	    {
-	       // doc = xmlElement();
-	        doc.getElementsByTagName(nodeName).item(nodeNumber).setTextContent(textContent);
-	    }
-	    
-	    //retrieving nodes number
-	    public int getNodesNumber(String nodeName) throws ParserConfigurationException, SAXException, IOException
-	    {
-	     //   doc = xmlElement();
-	        int length = doc.getElementsByTagName(nodeName).getLength();
-	        return length ;
-	    }
-		 //########################  END XML  ########################
-		 //###########################################################
-	    
-	    
-		 //############################################################
-		 //####################   Reports & Screenshot ################
-	    
-	    public static void ReportsInstance () throws ParserConfigurationException, SAXException, IOException
-	    {
-	    	 // Reports - new instance
-	    	 String ReportPath = xml_i.getData("ExtentReportsPath", 0,"init") + "WorkaroundReport_" + sdf +".html";
-	    	 System.out.println("Report - Start test " + ReportPath );
-			 extent= new ExtentReports(ReportPath ,true);
-	    }
-	    
-	    public static String Screenshot() throws ParserConfigurationException, SAXException, IOException
-	    {   
-	    	String ImagePath = xml_i.getData("ImagePath", 0,"init") + "wa_"+ GetRandomNumber() +".png";
-	    	scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-	    	destFile = new File(ImagePath);
-	    	FileUtils.copyFile(scrFile, destFile);
-	    	return ImagePath;
-	    }
-	    
-	    public static void StartReportTest(String TestName, String Description)
-	    {
-	    	 test = extent.startTest(TestName,Description);
-	    }
-	    
-	    public static void EndTest()
-	    {
-	    	extent.endTest(test);
-	    }
-	    
-	    public static void CloseInstance()
-	    {
-	    	extent.endTest(test);
-	    	extent.flush();
-	    	extent.close();
-	    }
-		 //###################  END Reports & Screenshot #############
-		 //###########################################################
-	    
-	    //############################################################
-		 //####################   Visual Testing      ################
-	    
-	    public static void ImagesInstance()
-	    {
-	    	 // Reports - new instance
-	    	screen = new Screen();
-	    	
-	    }
-	    
-	    public static void FindImage(String ImagePath) throws ParserConfigurationException, SAXException, IOException 
-	    {
-				try 
-				{
-					//screen = new Screen();
-					driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
-				    screen.find(ImagePath);
-					test.log(LogStatus.PASS, "Visual Testing - Image exist" );
-				} 
-				catch (Exception e) 
-				{
-					// TODO Auto-generated catch block
-					test.log(LogStatus.FAIL, "Visual Testing  - Image not exist " + e);
-					fail("Visual Testing  - Image not exist"  + e);
-				}	
+	public static String tests[];
+	
+	// UI TESTS CASES:
+	public static String CASE_1 = "Search only by sailing 'date to' field";
+	public static String CASE_2 = "Search only by sailing 'date from' field";
+	public static String CASE_3 = "Search 'Date to' greater 'Date from' field";
+	public static String CASE_4 = "Try to print over 5 documents";
+	public static String CASE_5 = "Insert not valid value to POL field";
+	public static String CASE_6 = "Insert not valid value to POD field";
+	public static String CASE_7 = "Insert not valid value to VESSEL field";
+	public static String CASE_8 = "Insert not valid value to VOYAGE field";
+	public static String CASE_9 = "Filtering results by POL from list";
+	public static String CASE_10 = "Filtering results by POD from list";
+	public static String CASE_11 = "Filter by BL but with irrelevante date range";
+	public static String CASE_12 = "Filter by date range";
 		
-	    }
-	    
-	    //###################  END RVisual Testing       #############
-		 //###########################################################
-	    
-	    
-	    
-	    //###################  Start numeric functions     #############
-		 //###########################################################
-	    
-	    public static int GetRandomNumber()
-	    {
-	    	Random rand = new Random();
-	    	int  n = rand.nextInt(50000) + 1;
-	    	return n;
-	    }
-	    //###################  END numeric functions      #############
-		 //###########################################################
-	    
+
+	public static String url;
+	
+	public static String xmlPath=  System.getProperty("user.dir") + "\\sanity.xml";
+	public static String ReportFilePath=System.getProperty("user.dir")+ "\\report\\";
+	public static String PDfPath=System.getProperty("user.dir")+ "\\PDF";
+	public static String ReportImagePath=System.getProperty("user.dir")+"\\report\\images\\";
+	
+
+	public static String user_name= System.getProperty("user.name"); 
+	
+	
+	public static String getData(String xmlFile,String nodeName,Integer indx) throws ParserConfigurationException, SAXException, IOException
+	{
+		File fXmlFile= new File(xmlFile);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder =dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(fXmlFile);
+		doc.getDocumentElement().normalize();
+		return doc.getElementsByTagName(nodeName).item(indx).getTextContent();
+		
+	}
+	
+	public static void setData(String xmlFile,String nodeName,Integer indx,String value) throws ParserConfigurationException, SAXException, IOException
+	{
+		File fXmlFile= new File(xmlFile);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder =dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(fXmlFile);
+		doc.getDocumentElement().normalize();
+		doc.getElementsByTagName(nodeName).item(indx).setTextContent(value);
+		
+	}
+	
+	public static int getNodeCount(String xmlFile,String nodeName) throws ParserConfigurationException, SAXException, IOException
+	{
+		File fXmlFile= new File(xmlFile);
+		int nodeCount=0;
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder =dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(fXmlFile);
+		doc.getDocumentElement().normalize();
+		return nodeCount=doc.getElementsByTagName(nodeName).getLength();
+		
+		
+	}
+	
+	
+	public static void report_folders()
+	{
+		mkdir_by_path(ReportFilePath);
+		mkdir_by_path(ReportImagePath);
+		mkdir_by_path(PDfPath);
+	}
+	public static void mkdir_by_path(String path)
+	{
+		File theDir = new File(path);
+		// if the directory does not exist, create it
+		if (!theDir.exists()) {
+		    System.out.println("creating directory: " + theDir.getName());
+		    boolean result = false;
+
+		    try{
+		        theDir.mkdir();
+		        result = true;
+		    } 
+		    catch(SecurityException se){
+		        //handle it
+		    }        
+		    if(result) {    
+		        System.out.println("DIR created");  
+		    }
+		}	
+	}
+	
+	
+	public static void initBrowser(String browserType) throws ParserConfigurationException, SAXException, IOException
+	{
+		switch (browserType.toLowerCase())
+		{
+		case "firefox":
+			driver=initFFDriver();
+			break;
+		case "ie":
+			driver=initIEDriver();
+			break;
+		case "chrome":
+			driver=initChromeDriver();
+			break;	
+			
+		}
+		
+	}
+	
+	public static WebDriver initFFDriver() throws ParserConfigurationException, SAXException, IOException
+	{
+		System.setProperty("webdriver.gecko.driver",getData(xmlPath,"fireFoxPath",0));
+		WebDriver driverff=new FirefoxDriver();
+		return driverff;
+	}
+	
+	public static WebDriver initIEDriver() throws ParserConfigurationException, SAXException, IOException
+	{
+		System.setProperty("webdriver.ie.driver",getData(xmlPath,"IEPath",0));	
+		WebDriver driverie=new InternetExplorerDriver();
+		return driverie;
+	}
+	
+	public static WebDriver initChromeDriver()
+	{
+		
+		try {
+			System.setProperty("webdriver.chrome.driver",getData(xmlPath,"ChromePath",0));
+
+			ChromeOptions options = new ChromeOptions();
+
+			HashMap<String, Object> chromeOptionsMap = new HashMap<String, Object>();
+			chromeOptionsMap.put("plugins.plugins_disabled", new String[] {"Chrome PDF Viewer"});
+			chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
+			options.setExperimentalOption("prefs", chromeOptionsMap);
+			options.addArguments("--no-sandbox");
+			chromeOptionsMap.put("download.default_directory", PDfPath);
+
+			DesiredCapabilities cap = DesiredCapabilities.chrome();
+			cap.setCapability(ChromeOptions.CAPABILITY, chromeOptionsMap);
+			cap.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+			cap.setCapability(ChromeOptions.CAPABILITY, options);
+			driver = new ChromeDriver(cap);
+		} 
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return driver;
+	}
+	
+	
+
+	
+	
+	public static String takeSS()
+	{
+		String SSpath = null;
+		try
+		{
+			Date date = new Date();
+			SimpleDateFormat sdf=new SimpleDateFormat("ddMMyyyy_HHmmss");
+			String ds=sdf.format(date);
+            SSpath= "images\\" + ds +".png" ;
+			File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			FileUtils.copyFile(scrFile, new File("report\\" + SSpath));
+			System.out.println(SSpath);
+		}
+		catch(Exception e)
+		{ 
+			System.out.println(e);
+		}  
+		return SSpath;
+	}
+	
+	
+	public static void dbConnection(String LCC){  
+	try{  
+	//step1 load the driver class  
+	Class.forName("oracle.jdbc.driver.OracleDriver");  
+	  
+	//step2 create  the connection object  
+	Connection con=DriverManager.getConnection("jdbc:oracle:thin:@//****","****","****");  
+	  
+	//step3 create the statement object  
+	Statement stmt=con.createStatement();  
+	  
+	//step4 execute query  
+	ResultSet rs=stmt.executeQuery("select .........");
+	ResultSetMetaData rsmt=rs.getMetaData();
+	int colCount=rsmt.getColumnCount();
+	
+	while(rs.next()){
+		for(int i=1; i<=colCount;i++){
+			System.out.print(rs.getString(i) + " ");
+	
+		}
+		
+	}
+	  
+	//step5 close the connection object  
+	con.close();  
+	  
+	}catch(Exception e){ 
+		
+		System.out.println(e);}  
+	  
+	}  
+	
+	public static String dbGetContainer(String containerType){  
+		
+		
+		String containerNumber = null;
+		try{  
+		//step1 load the driver class  
+		Class.forName("oracle.jdbc.driver.OracleDriver");  
+		  
+		//step2 create  the connection object  
+		Connection con=DriverManager.getConnection("jdbc:oracle:thin:@//hfaexa-scan:1521/****","****","****");  
+		  
+		//step3 create the statement object  
+		Statement stmt=con.createStatement();  
+		  
+		//step4 execute query  
+		ResultSet rs=stmt.executeQuery("SELECT ........................................");
+		//ResultSetMetaData rsmt=rs.getMetaData();
+		rs.next();
+		containerNumber=rs.getString(1);
+//		int colCount=rsmt.getColumnCount();
+//		while(rs.next()){
+//			for(int i=1; i<=colCount;i++){
+//				System.out.print(rs.getString(i) + " ");
+//		
+//			}
+//			
+//		}
+		
+		  
+		//step5 close the connection object  
+		con.close();  
+		  
+		}catch(Exception e){ 
+			
+			System.out.println(e);}  
+		
+		  
+	
+	
+	
+	return containerNumber;
+	
+	
+	}
+	
+	
+	public void web_connection_string ()
+	  {
+     String dbURL = "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=******)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=****)))";
+	   String strUserID = "****";
+	   String strPassword = "****";
+		      try
+		      {
+		            myConnection=DriverManager.getConnection(dbURL,strUserID,strPassword);
+		            sqlStatement = myConnection.createStatement();  
+		        }
+		      catch (SQLException e) 
+		      {
+		            // TODO Auto-generated catch block
+		            e.printStackTrace();
+		        }  
+		  }
+	
+	
+	 	  
+	  
+	  public Connection connaction_string_sqlserver() throws ClassNotFoundException, SQLException
+	  {
+	        //Loading the required JDBC Driver class
+	        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");  
+
+	        // Create a variable for the connection string.  
+	        String connectionUrl = "jdbc:sqlserver://*****\\*****;" +  
+	                    "databaseName=****;user=****;password=****";  
+
+	        // Declare the JDBC objects.  
+	        Connection con = null;  
+	        
+	        // Establish the connection.  
+	        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");  
+	        con = DriverManager.getConnection(connectionUrl);  
+
+	        return con;
+	  }    
+	  
+		public static void InstanceReports(String rn) throws ParserConfigurationException, SAXException, IOException
+		{
+			Date date = new Date();
+			SimpleDateFormat sdf=new SimpleDateFormat("ddMMyyyy_HHmmss");
+			String ds=sdf.format(date);
+			String reportName=rn+ " _ " + ds + ".html" ;
+			extent=new ExtentReports(ReportFilePath+ reportName,true);
+			
+		}
+
+		public static void initReportTest(String testName,String testDesc)
+		{
+			test=extent.startTest(testName,testDesc);
+		}
+		public static void finalizeReportTest()
+		{
+			extent.endTest(test);
+	}
+	
+		public static void finalizeExtentReportTest()
+		{
+			extent.flush();
+			extent.close();
+		}
+		
+		
+		
+
+
 }
